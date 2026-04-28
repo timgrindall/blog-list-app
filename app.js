@@ -1,7 +1,10 @@
 const express = require('express')
 const app = express()
 
-const notesRouter = require('./controllers/blogs')
-app.use('/api/notes', notesRouter)
+app.use(express.json())
+
+const blogsRouter = require('./controllers/blogs')
+
+app.use('/api/blogs', blogsRouter)
 
 module.exports = app

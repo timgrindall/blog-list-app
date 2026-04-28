@@ -1,0 +1,14 @@
+#GET all docs
+GET http://localhost:3003/api/blogs
+
+###
+
+POST http://localhost:3003/api/blogs HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Outside Hollywood",
+  "author": "Isaac Botkin",
+  "url": "https://www.outside-hollywood.com/",
+  "likes": 900
+}

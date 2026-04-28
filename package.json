@@ -1,0 +1,21 @@
+{
+  "name": "blog-list-app",
+  "version": "0.0.1",
+  "description": "Application for gathering a list of interesting blogs from across the web",
+  "keywords": [
+    "blog"
+  ],
+  "license": "MIT",
+  "author": "Timothy Grindall",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.5.0"
+  }
+}

@@ -1,2 +1,2 @@
-### Blog List App
-## via Full Stack Open course by Universit of Helsinki
+# Blog List App
+### via Full Stack Open course by University of Helsinki

@@ -4,11 +4,12 @@ const config = require('./utils/config')
 const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
 const blogsRouter = require('./controllers/blogs')
+const usersRouter = require('./controllers/users')
 
 const app = express()
 
 if (!config.MONGODB_URI) {
-  console.log('No MONGO_URI ENV variable!')
+  console.log('No MONGODB_URI ENV variable!')
   process.exit(1)
 }
 

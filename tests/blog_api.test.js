@@ -126,6 +126,38 @@ describe('When working with an initial collection of blog entries', () => {
     console.log(response.status)
     assert.strictEqual(response.status, 400)
   })
+
+  test('Verify blog entry is deleted', async () => {
+    const response = await api.get('/api/blogs')
+    const body = response.body
+    const lastBlog = body[body.length - 1]
+    const deletedId = lastBlog.id
+
+    console.log('id:', deletedId)
+
+    await api.delete('/api/blogs/' + deletedId).expect(204)
+    updated = await api.get('/api/blogs')
+
+    assert.strictEqual(updated.body.length, body.length - 1)
+  })
+
+  test('Verify a blog entry is updated', async () => {
+    const response = await api.get('/api/blogs')
+    const body = response.body
+    const originalEntry = body[body.length - 1]
+    const id = originalEntry.id
+
+    const updatedEntry = await api.put('/api/blogs/' + id).send({
+      likes: originalEntry.likes + 1
+    })
+
+    const baseline = {
+      ...originalEntry,
+      likes: originalEntry.likes + 1
+    }
+
+    assert.deepStrictEqual(baseline, updatedEntry.body)
+  })
 })
 
 after(async () => {

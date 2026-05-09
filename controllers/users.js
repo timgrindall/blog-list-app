@@ -35,7 +35,7 @@ usersRouter.post('/', async (request, response) => {
 })
 
 usersRouter.get('/', async (req, res) => {
-  const users = await User.find({})
+  const users = await User.find({}).populate("blogs", { title: 1, author: 1, url: 1})
 
   if (users.length === 0) {
     logger.error('No users found in DB')
@@ -46,7 +46,8 @@ usersRouter.get('/', async (req, res) => {
   usersFormatted = users.map((user) => ({
     username: user.username,
     name: user.name,
-    id: user.id
+    id: user.id,
+    blogs: user.blogs
   }))
   // logger.info(usersFormatted)
 

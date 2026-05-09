@@ -12,16 +12,38 @@ POST http://localhost:3003/api/blogs HTTP/1.1
 Content-Type: application/json
 
 {
-  "title": "Outside Hollywood",
-  "author": "Isaac Botkin",
-  "url": "https://www.outside-hollywood.com/",
-  "likes": 900
+  "title": "The Important Thing",
+  "author": "Timothy Grindall",
+  "url": "https://importantthing.blog",
+  "likes": 9
 }
+# {
+#   "title": "Vanguard Blog",
+#   "author": "Vanguard Insurance",
+#   "url": "https://https://investor.vanguard.com/resources-education/news-perspectives",
+#   "likes": 115
+# }
+# {
+#   "title": "Pro Lost",
+#   "author": "Stu Maschwitz",
+#   "url": "https://prolost.com",
+#   "likes": 305
+# }
+
+###
+
+DELETE http://localhost:3003/api/blogs/69feb4a364d0723a1bebc49e HTTP/1.1
 
 ###
 
 POST http://localhost:3003/api/users HTTP/1.1
 Content-Type: application/json
+
+{
+  "username": "merelytimo",
+  "name": "Tim Grindall",
+  "password": "OrcaCucumber7"
+}
 
 # not a string request
 # {
@@ -30,13 +52,13 @@ Content-Type: application/json
 # }
 
 # basic superuser
-{
-  "username": "root",
-  "name": "superuser",
-  "password": "FranklinLives"
-}
+# {
+#   "username": "root",
+#   "name": "superuser",
+#   "password": "FranklinLives"
+# }
 
 ###
 
-DELETE http://localhost:3003/api/users/69fa559096a93a9168c9ce5e HTTP/1.1
+DELETE http://localhost:3003/api/users/69fa55f5e291e88f7f7705ba HTTP/1.1
 Content-Type: application/json

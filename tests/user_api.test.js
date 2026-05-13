@@ -24,7 +24,7 @@ describe('when there is initially one user in db', () => {
     await user.save()
   })
 
-  test.only('creation succeeds with a fresh username', async () => {
+  test('creation succeeds with a fresh username', async () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
@@ -46,7 +46,7 @@ describe('when there is initially one user in db', () => {
     assert(usernames.includes(newUser.username))
   })
 
-  test.only('creation fails with proper statuscode and message if username already taken', async () => {
+  test('creation fails with proper statuscode and message if username already taken', async () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
@@ -67,7 +67,7 @@ describe('when there is initially one user in db', () => {
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
 
-  test.only('creation fails with proper statuscode if password is too short', async () => {
+  test('creation fails with proper statuscode if password is too short', async () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
@@ -88,7 +88,7 @@ describe('when there is initially one user in db', () => {
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
 
-  test.only('creation fails with proper statuscode if password is not a string', async () => {
+  test('creation fails with proper statuscode if password is not a string', async () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {

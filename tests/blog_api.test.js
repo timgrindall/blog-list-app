@@ -1,23 +1,38 @@
-const { test, after, beforeEach, describe } = require('node:test')
+const { test, after, before, beforeEach, describe } = require('node:test')
 const mongoose = require('mongoose')
 const assert = require('node:assert')
 const listHelper = require('../utils/list_helper')
 const blogs = require('./blogs-list')
 const Blog = require('../models/blog') // your Mongoose model
+const User = require('../models/user')
+const bcrypt = require('bcryptjs')
 
 const app = require('../app')
 const supertest = require('supertest')
+const blog = require('../models/blog')
 // const { forEach } = require('lodash')
 
 const api = supertest(app)
 
 describe('When working with an initial collection of blog entries', () => {
-  beforeEach(async () => {
-    await Blog.deleteMany({})         // clear the collection
-    await Blog.insertMany(blogs)      // seed from your imported blogs-list
+  let testUserId
+
+  before(async () => {
+    // create the user once
+    await User.deleteMany({})
+    const passwordHash = await bcrypt.hash('OrcaCucumber7', 10)
+    const user = new User({ username: 'merelytimo', passwordHash })
+    const savedUser = await user.save()
+    testUserId = savedUser._id
   })
 
-  test('Notes are returned as json', async () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})         // clear the collection
+    const blogsWithUser = blogs.map(blog => ({...blog, user: testUserId}))
+    await Blog.insertMany(blogsWithUser)      // seed from your imported blogs-list
+  })
+
+  test('Blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
       .expect(200)
@@ -37,56 +52,39 @@ describe('When working with an initial collection of blog entries', () => {
     })
   })
 
-  test('Verify POST request creates new blog post', () => {
-    let blogsLength = 0
+  // methodology: get all -> count, login -> token, token -> post, get all -> count, compare length
 
-    //get the current number of blogs
-    return api.get('/api/blogs').then( response => {
-      const body = response.body
-      blogsLength = body.length
+  test.only('Verify POST request creates new blog post', async () => {
+
+    //get the initial count
+    let response = await api.get('/api/blogs')
+    const blogsLength = response.body.length
     
-      console.log('blogs length:', blogsLength)
+    console.log('blogs length:', blogsLength)
+
+    // login to get auth token
+    const loginResponse = await api.post('/api/login').send({
+      username: 'merelytimo',
+      password: 'OrcaCucumber7'
+    })
+    const token = loginResponse.body.token
 
       //test adding a blog
-      return api.post('/api/blogs').send({
-        title: 'Test Post',
-        author: 'Test Author',
-        url: 'http://test.com',
-        likes: 0
-      }).then(() => {
-        console.log('post added')
-
-        return api.get('/api/blogs').then(response => {
-          console.log('new length:', response.body.length)
-          assert.strictEqual(response.body.length, blogsLength + 1)
-        })
-      })
+    await api
+    .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
+    .send({
+      title: 'Test Post',
+      author: 'Test Author',
+      url: 'http://test.com',
+      likes: 0
     })
+    console.log('post added')
 
-  })
-
-  test('Verify Post request creates new post (async/await version)', async () => {
-    let blogs_length = 0
-
-    //find the initial number of blogs
-    let response = await api.get('/api/blogs')
-    let body = response.body
-    blogs_length = body.length
-    console.log('blogs length:', blogs_length)
-
-    //test adding a blog
-    await api.post('/api/blogs').send({
-        title: 'Test Post 2',
-        author: 'Test Author 2',
-        url: 'http://test.com',
-        likes: 0
-      })
-
-    //verify the number of blogs is added by one
+    // compare lengths
     response = await api.get('/api/blogs')
     console.log('new length:', response.body.length)
-
-    assert.strictEqual(blogs_length + 1, response.body.length)
+    assert.strictEqual(response.body.length, blogsLength + 1)
   })
 
   test('Verify that when likes is missing on POST it defaults to zero', async () => {
@@ -127,18 +125,34 @@ describe('When working with an initial collection of blog entries', () => {
     assert.strictEqual(response.status, 400)
   })
 
-  test('Verify blog entry is deleted', async () => {
+  // rewrite this one for delete
+  test.only('Verify DELETE request deletes blog entry with same user', async () => {
+
+      // login to get auth token
+    const loginResponse = await api.post('/api/login').send({
+      username: 'merelytimo',
+      password: 'OrcaCucumber7'
+    })
+    const token = loginResponse.body.token
+
+    // get blog id
     const response = await api.get('/api/blogs')
     const body = response.body
     const lastBlog = body[body.length - 1]
-    const deletedId = lastBlog.id
+    const id = lastBlog.id
 
-    console.log('id:', deletedId)
+    console.log('id:', id)
 
-    await api.delete('/api/blogs/' + deletedId).expect(204)
-    updated = await api.get('/api/blogs')
+    // test delete
+    await api.delete('/api/blogs/' + id)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(204)
+    
+    // get list of blogs
+    updatedRes = await api.get('/api/blogs')
 
-    assert.strictEqual(updated.body.length, body.length - 1)
+    //test length is equal
+    assert.strictEqual(updatedRes.body.length, body.length - 1)
   })
 
   test('Verify a blog entry is updated', async () => {
@@ -157,6 +171,23 @@ describe('When working with an initial collection of blog entries', () => {
     }
 
     assert.deepStrictEqual(baseline, updatedEntry.body)
+  })
+
+  test.only('Verify you get a 401 Unauthorized status code when there is no token', async () => {
+
+      //test adding a blog
+    const response = await api
+    .post('/api/blogs')
+    .set('Authorization', `Bearer xyz`)
+    .send({
+      title: 'Test Post',
+      author: 'Test Author',
+      url: 'http://test.com',
+      likes: 0
+    })
+    .expect(401)
+
+    // assert.strictEqual(response.status, 401)
   })
 })
 

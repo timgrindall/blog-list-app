@@ -15,7 +15,7 @@ A RESTful backend API for managing blog posts with user authentication, built wi
 - **Node.js** with **Express**
 - **MongoDB** with **Mongoose**
 - **JSON Web Tokens (JWT)** for authentication
-- **bcrypt** for password hashing
+- **bcryptjs** for password hashing (used instead of `bcrypt` for cross-platform compatibility — `bcrypt` has known issues on Windows)
 - Node.js built-in **test runner** for testing
 - **Supertest** for HTTP integration tests
 

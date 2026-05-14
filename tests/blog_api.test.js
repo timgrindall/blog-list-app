@@ -20,7 +20,7 @@ describe('When working with an initial collection of blog entries', () => {
   before(async () => {
     // create the user once
     await User.deleteMany({})
-    const passwordHash = await bcrypt.hash('OrcaCucumber7', 10)
+    const passwordHash = await bcrypt.hash(process.env.SESSION_SECRET, 10)
     const user = new User({ username: 'merelytimo', passwordHash })
     const savedUser = await user.save()
     testUserId = savedUser._id
@@ -65,7 +65,7 @@ describe('When working with an initial collection of blog entries', () => {
     // login to get auth token
     const loginResponse = await api.post('/api/login').send({
       username: 'merelytimo',
-      password: 'OrcaCucumber7'
+      password: process.env.SESSION_SECRET
     })
     const token = loginResponse.body.token
 
@@ -131,7 +131,7 @@ describe('When working with an initial collection of blog entries', () => {
       // login to get auth token
     const loginResponse = await api.post('/api/login').send({
       username: 'merelytimo',
-      password: 'OrcaCucumber7'
+      password: process.env.SESSION_SECRET
     })
     const token = loginResponse.body.token
 

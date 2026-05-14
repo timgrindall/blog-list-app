@@ -6,16 +6,9 @@ const { ObjectId } = require('mongodb')
 const jwt = require('jsonwebtoken')
 const {userExtractor} = require('../utils/middleware')
 
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.startsWith('Bearer ')) {
-    return authorization.replace('Bearer ', '')
-  }
-  return null
-}
 
 blogsRouter.get('/', async (request, response) => {
-  blogs = await Blog.find({}).populate('user', { username: 1, name: 1})
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1})
   
   // logger.info(blogs)
   response.json(blogs)

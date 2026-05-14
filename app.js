@@ -14,6 +14,11 @@ if (!config.MONGODB_URI) {
   process.exit(1)
 }
 
+if (!process.env.SECRET) {
+  console.log('No SECRET ENV variable!')
+  process.exit(1)
+}
+
 mongoose.connect(config.MONGODB_URI, { family: 4 })
   .then(() => {
     logger.info('connected to MongoDB')

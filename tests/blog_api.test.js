@@ -94,7 +94,7 @@ describe('When working with an initial collection of blog entries', () => {
       url: 'http://test.com'
     })
 
-    response = await api.get('/api/blogs')
+    const response = await api.get('/api/blogs')
     const body = response.body
     const index = body.length - 1
 
@@ -149,7 +149,7 @@ describe('When working with an initial collection of blog entries', () => {
       .expect(204)
     
     // get list of blogs
-    updatedRes = await api.get('/api/blogs')
+    const updatedRes = await api.get('/api/blogs')
 
     //test length is equal
     assert.strictEqual(updatedRes.body.length, body.length - 1)

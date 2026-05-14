@@ -3,7 +3,7 @@ const usersRouter = require('express').Router()
 const User = require('../models/user')
 const logger = require('../utils/logger')
 
-usersRouter.post('/', async (request, response) => {
+usersRouter.post('/', async (request, response, next) => {
   const { username, name, password } = request.body
 
   // Validation checks
@@ -29,9 +29,12 @@ usersRouter.post('/', async (request, response) => {
     passwordHash,
   })
 
-  const savedUser = await user.save()
-
-  response.status(201).json(savedUser)
+  try {
+    const savedUser = await user.save()
+    response.status(201).json(savedUser)
+  } catch (error) {
+    next(error)  // passes E11000 to errorHandler in middleware.js
+  }
 })
 
 usersRouter.get('/', async (req, res) => {
@@ -43,7 +46,7 @@ usersRouter.get('/', async (req, res) => {
   }
 
   //remove blogs from user info
-  usersFormatted = users.map((user) => ({
+  const usersFormatted = users.map((user) => ({
     username: user.username,
     name: user.name,
     id: user.id,

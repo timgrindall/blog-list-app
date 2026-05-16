@@ -16,7 +16,7 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', userExtractor, async (request, response) => {
   const body = request.body
-  const user = request.user
+  const user = request.user //extracted by middleware from auth token
 
   // save the new blog with user id
   const blog = new Blog({...request.body, user: user._id})
@@ -24,7 +24,7 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
 
   //save the new blog to the user
   user.blogs = user.blogs.concat(savedBlog._id)
-  await user.save()   // we don't save the returned doc
+  await user.save()
 
   response.status(201).json(savedBlog)
 })

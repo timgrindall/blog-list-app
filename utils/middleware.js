@@ -44,15 +44,18 @@ const userExtractor = async (request, response, next) => {
   try {
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
     if (!decodedToken.id) {
+      logger.error("token invalid")
       return response.status(401).json({ error: 'token invalid' })
     }
     const user = await User.findById(decodedToken.id)
     if (!user) {
+      logger.error("UserId missing or not valid")
       return response.status(400).json({ error: 'UserId missing or not valid' })
     }
     request.user = user
     next()
-  } catch (error) {
+  } catch (error) { // why am I using a catchall?
+    logger.error('catchall: token invalid')
     return response.status(401).json({ error: 'token invalid' })
   }
 }
